@@ -1,14 +1,18 @@
-# Use OpenJDK as base image
-FROM openjdk:17-jdk-slim
+# Use a lightweight base image with OpenJDK 8
+FROM openjdk:8u151-jdk-alpine3.7
 
-# Set working directory inside the container
-WORKDIR /app
+# Set a non-root user for running the application
+RUN adduser -D imagebuilder
+USER imagebuilder
 
-# Copy the built JAR file into the container
-COPY . bookmydr-0.0.1-SNAPSHOT.jar
+# Expose the port on which the application will run
+EXPOSE 8070
 
-# Expose port 8080 for application
-EXPOSE 8080
+# Copy the JAR file to the /usr/app directory
+COPY target/shopping-cart*.jar /usr/app/
 
-# Command to run the application
-CMD ["java", "-jar", "bookmydr-0.0.1-SNAPSHOT.jar"]
+# Set the working directory to /usr/app
+WORKDIR /usr/app
+
+# Run the application using a non-root user
+CMD ["java", "-jar", "shopping-cart*.jar"]
